@@ -2,18 +2,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "bst.h"
-
-/*
- * Previous versions of CPP implemented the comma-deletion extension much more generally. We have restricted it in this release to minimize the differences from C99.
- * To get the same effect with both this and previous versions of GCC, the token preceding the special ‘##’ must be a comma,
- * and there must be white space between that comma and whatever comes immediately before it:
- * #define eprintf(format, args...) fprintf (stderr, format , ##args)
- *
- * Source : https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
- */
-#define LOG_ERR(MSG, ...) do { \
-        fprintf(stderr, "%s():%d " MSG "\n", __func__, __LINE__ , ##__VA_ARGS__); \
-} while (0)
+#include "log.h"
+#include "queue.h"
+#include "stack.h"
 
 
 /*
@@ -153,6 +144,16 @@ void bst_print_inorder(node_t *cur_root)
 }
 
 /*
+ * Print Binary Search Tree in inorder fashion without using recursion.
+ *
+ * @cur_root : Root of the Binary Search Tree.
+ */
+void bst_print_inorder_nonrecur(node_t *cur_root)
+{
+
+}
+
+/*
  * Print Binary search Tree in preorder fashion.
  *
  * @cur_root : Root of the Binary Search Tree.
@@ -186,6 +187,8 @@ int main()
 {
     unsigned int n;
     node_t *root = NULL;
+    queue_t *q = NULL;
+    Stack_t *stack = NULL;
 
     printf("Please enter number nodes : ");
     scanf("%u", &n);
@@ -201,6 +204,30 @@ int main()
     printf("\n=======================\n");
     bst_destroy(&root);
     assert(!root);
+
+    printf("\nPlease enter queue data : ");
+    q = queue_create(n);
+    printf("\nQueue entries:\n");
+    queue_print(q);
+    printf("\n=======================\n");
+    //queue destroy
+    while (!queue_empty(q))
+    {
+        free(queue_remove(q));
+    }
+    free(q);
+
+    printf("\nPlease enter stack data : ");
+    stack = stack_create(n);
+    printf("\nStack entries:\n");
+    stack_print(stack);
+    printf("\n=======================\n");
+    //Stack destroy
+    while (!stack_empty(stack))
+    {
+        free(stack_pop(stack));
+    }
+    free(stack);
 
     return 0;
 }

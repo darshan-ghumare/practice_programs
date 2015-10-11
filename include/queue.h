@@ -160,7 +160,10 @@ queue_t *queue_create(unsigned int n)
     return q;
 
 err:
-    queue_destroy(q);
+    while (!queue_empty(q))
+    {
+        free(queue_remove(q));
+    }
 
     free(q);
 
