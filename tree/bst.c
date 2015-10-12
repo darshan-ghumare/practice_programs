@@ -150,7 +150,105 @@ void bst_print_inorder(node_t *cur_root)
  */
 void bst_print_inorder_nonrecur(node_t *cur_root)
 {
+    /* Stack of nodes that we have visited but yet to process their left sub-tree. */
+    Stack_t nodes_stack;
+    /* Stack of childrens of nodes in the above stack which are yet to be visited. */
+    Stack_t childs_stack;
 
+    stack_init(&nodes_stack);
+    stack_init(&childs_stack);
+
+    if (!cur_root)
+    {
+        //NO-OP.
+        return;
+    }
+
+    /* we have just visited root's parent :). */
+    stack_push(&childs_stack, cur_root);
+
+    while (!stack_empty(&childs_stack) || !stack_empty(&nodes_stack))
+    {
+        if (!stack_empty(&childs_stack))
+        {
+            node_t *child = (node_t *) stack_pop(&childs_stack);
+            assert(child);
+
+            if (child->left_child)
+            {
+                /* As this is inorder we need to process left sub-tree first. */
+                stack_push(&childs_stack, child->left_child);
+                /* Once left sub-tree is prcessed we can process its parent then. */
+                stack_push(&nodes_stack, child);
+            }
+            else
+            {
+                //Done with left sub-tree.
+                printf("%d ", child->data);
+
+                if (child->right_child)
+                {
+                    stack_push(&childs_stack, child->right_child);
+                }
+            }
+        }
+        else
+        {
+            assert(!stack_empty(&nodes_stack));
+            node_t *node = (node_t *) stack_pop(&nodes_stack);
+            assert(node);
+
+            //Done with left sub-tree.
+            printf("%d ", node->data);
+
+            if (node->right_child)
+            {
+                stack_push(&childs_stack, node->right_child);
+            }
+        }
+    }
+
+    assert(stack_empty(&nodes_stack) && stack_empty(&childs_stack));
+}
+
+/*
+ * Print Binary Search Tree in in-order fashion without using recursion using single stack.
+ *
+ * @cur_root : Pointer to the root of the binary search tree.
+ */
+void bst_print_inorder_nonrecur_1stack(node_t *cur_root)
+{
+    /* Stack of nodes of which we have processed left sub-tree. */
+    Stack_t nodes_stack;
+    node_t *node = cur_root;
+
+    stack_init(&nodes_stack);
+
+    while (node || !stack_empty(&nodes_stack))
+    {
+        if (node)
+        {
+            //First process left sub-tree.
+            while (node->left_child)
+            {
+                //Push current node on stack for processing of right sub-tree later.
+                stack_push(&nodes_stack, node);
+                node = node->left_child;
+            }
+
+            printf("%d ", node->data);
+            node = node->right_child;
+        }
+        else
+        {
+            assert(!stack_empty(&nodes_stack));
+            node = (node_t *) stack_pop(&nodes_stack);
+            assert(node);
+
+            printf("%d ", node->data);
+            node = node->right_child;
+        }
+    }
 }
 
 /*
@@ -199,12 +297,27 @@ int main()
     bst_print_preorder(root);
     printf("\nIn-Order:\n");
     bst_print_inorder(root);
+    printf("\nIn-Order-Nonrecursive:\n");
+    bst_print_inorder_nonrecur(root);
+    printf("\nIn-Order-Nonrecursive-one-stack:\n");
+    bst_print_inorder_nonrecur_1stack(root);
     printf("\nPost-Order:\n");
     bst_print_postorder(root);
     printf("\n=======================\n");
     bst_destroy(&root);
     assert(!root);
 
+    return 0;
+}
+
+void test_stack_queue()
+{
+    unsigned int n;
+    queue_t *q = NULL;
+    Stack_t *stack = NULL;
+
+    printf("Please enter number nodes : ");
+    scanf("%u", &n);
     printf("\nPlease enter queue data : ");
     q = queue_create(n);
     printf("\nQueue entries:\n");
@@ -228,7 +341,5 @@ int main()
         free(stack_pop(stack));
     }
     free(stack);
-
-    return 0;
 }
 

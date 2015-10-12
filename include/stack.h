@@ -14,7 +14,7 @@ typedef struct stack_entry_t
 
 typedef struct stack
 {
-   stack_entry_t  *top;             /* Yop of stack. */
+   stack_entry_t  *top;             /* Top of stack. */
 } Stack_t;
 
 void stack_init(Stack_t *stack)
@@ -25,6 +25,11 @@ void stack_init(Stack_t *stack)
 int stack_empty(Stack_t *stack)
 {
     return (!stack->top);
+}
+
+void *stack_top(Stack_t *stack)
+{
+    return stack->top;
 }
 
 /*
