@@ -267,6 +267,47 @@ void bst_print_preorder(node_t *cur_root)
 }
 
 /*
+ * Printf Binary Search tree in preorder fashion without recursion.
+ *
+ * @cur_root : Root of the Biinary Search Tree.
+ */
+void bst_print_preorder_nonrecur(node_t *cur_root)
+{
+    /* Stack of nodes of which we have processed left sub-tree. */
+    Stack_t nodes_stack;
+    node_t *node = cur_root;
+
+    stack_init(&nodes_stack);
+
+    while (node || !stack_empty(&nodes_stack))
+    {
+        if (node)
+        {
+            printf("%d ", node->data);
+
+            //Process left sub-tree.
+            while (node->left_child)
+            {
+                //Push current node on stack for processing of right sub-tree later.
+                stack_push(&nodes_stack, node);
+                node = node->left_child;
+                printf("%d ", node->data);
+            }
+
+            node = node->right_child;
+        }
+        else
+        {
+            assert(!stack_empty(&nodes_stack));
+            node = (node_t *) stack_pop(&nodes_stack);
+            assert(node);
+
+            node = node->right_child;
+        }
+    }
+}
+
+/*
  * Print Binary search Tree in postorder fashion.
  *
  * @cur_root : Root of the Binary Search Tree.
@@ -278,6 +319,45 @@ void bst_print_postorder(node_t *cur_root)
         bst_print_postorder(cur_root->left_child);
         bst_print_postorder(cur_root->right_child);
         printf("%d ", cur_root->data);
+    }
+}
+
+/*
+ * Print Binary Search Tree in preorder fashion without recursion.
+ *
+ * @cur_root : Root of the Binary Search Tree.
+ */
+void bst_print_postorder_nonrecur(node_t *cur_root)
+{
+    /* Stack of nodes of which we have processed left sub-tree. */
+    Stack_t nodes_stack;
+    node_t *node = cur_root;
+
+    stack_init(&nodes_stack);
+
+    while (node || !stack_empty(&nodes_stack))
+    {
+        if (node)
+        {
+
+            //Process left sub-tree.
+            while (node->left_child)
+            {
+                //Push current node on stack for processing of right sub-tree later.
+                stack_push(&nodes_stack, node);
+                node = node->left_child;
+            }
+
+            node = node->right_child;
+        }
+        else
+        {
+            assert(!stack_empty(&nodes_stack));
+            node = (node_t *) stack_pop(&nodes_stack);
+            assert(node);
+
+            node = node->right_child;
+        }
     }
 }
 
