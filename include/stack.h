@@ -29,7 +29,7 @@ int stack_empty(Stack_t *stack)
 
 void *stack_top(Stack_t *stack)
 {
-    return stack->top;
+    return (stack_empty(stack))? NULL: stack->top->data;
 }
 
 /*

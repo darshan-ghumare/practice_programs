@@ -329,7 +329,7 @@ void bst_print_postorder(node_t *cur_root)
  */
 void bst_print_postorder_nonrecur(node_t *cur_root)
 {
-    /* Stack of nodes of which we have processed left sub-tree. */
+    /* Stack of nodes of which we have processed left sub-tree. Once right sub-tree is processed pop it. */
     Stack_t nodes_stack;
     node_t *node = cur_root;
 
@@ -339,7 +339,6 @@ void bst_print_postorder_nonrecur(node_t *cur_root)
     {
         if (node)
         {
-
             //Process left sub-tree.
             while (node->left_child)
             {
@@ -348,15 +347,42 @@ void bst_print_postorder_nonrecur(node_t *cur_root)
                 node = node->left_child;
             }
 
+            /*
+             * We have processed left sub-tree of the current node.
+             * Add a marker before processing right sub-tree.
+             * This will helps us to know that we have processed both left and right sub-tree.
+             */
+            stack_push(&nodes_stack, node);
+            stack_push(&nodes_stack, NULL);
             node = node->right_child;
         }
         else
         {
             assert(!stack_empty(&nodes_stack));
-            node = (node_t *) stack_pop(&nodes_stack);
-            assert(node);
+            node = (node_t *) stack_top(&nodes_stack);
 
-            node = node->right_child;
+            while (!node && !stack_empty(&nodes_stack))
+            {
+                //Done with both left and right sub-tree.
+                node = (node_t *) stack_pop(&nodes_stack);
+                assert(!node);
+                node = (node_t *) stack_pop(&nodes_stack);
+                assert(node);
+                printf("%d ", node->data);
+
+                node = (node_t *) stack_top(&nodes_stack);
+            }
+
+            if (!stack_empty(&nodes_stack))
+            {
+                /*
+                 * We have processed left sub-tree of the current node (at top-of-stack).
+                 * Add a marker before processing right sub-tree.
+                 * This will helps us to know that we have processed both left and right sub-tree.
+                 */
+                stack_push(&nodes_stack, NULL);
+                node = node->right_child;
+            }
         }
     }
 }
@@ -375,6 +401,8 @@ int main()
 
     printf("\nPre-Order:\n");
     bst_print_preorder(root);
+    printf("\nPre-Order-ono-resursive:\n");
+    bst_print_preorder_nonrecur(root);
     printf("\nIn-Order:\n");
     bst_print_inorder(root);
     printf("\nIn-Order-Nonrecursive:\n");
@@ -383,6 +411,8 @@ int main()
     bst_print_inorder_nonrecur_1stack(root);
     printf("\nPost-Order:\n");
     bst_print_postorder(root);
+    printf("\nPost-Order-ono-resursive:\n");
+    bst_print_postorder_nonrecur(root);
     printf("\n=======================\n");
     bst_destroy(&root);
     assert(!root);
