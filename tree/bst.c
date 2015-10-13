@@ -387,6 +387,59 @@ void bst_print_postorder_nonrecur(node_t *cur_root)
     }
 }
 
+/*
+ * Print Binary Search Tree in level-wise fashion.
+ *
+ * @cur_root : Root of the Binary Search Tree.
+ */
+void bst_print_levelwise(node_t *cur_root)
+{
+    queue_t q;
+
+    if (!cur_root)
+    {
+        //NO-OP.
+        return;
+    }
+
+    queue_init(&q);
+
+    queue_add(&q, cur_root);
+    queue_add(&q, NULL);
+
+    while (!queue_empty(&q))
+    {
+        node_t *node = (node_t *) queue_remove(&q);
+
+        //End of current level.
+        if (!node)
+        {
+            if (queue_empty(&q))
+            {
+                //We have processed all the nodes.
+                continue;
+            }
+
+            //All nodes from the next level have already been enqueued, mark end of next level.
+            queue_add(&q, NULL);
+            //Print nodes from next level on the next line.
+            printf("\n");
+            continue;
+        }
+
+        printf("%d ", node->data);
+
+        if (node->left_child)
+        {
+            queue_add(&q, node->left_child);
+        }
+        if (node->right_child)
+        {
+            queue_add(&q, node->right_child);
+        }
+    }
+}
+
 int main()
 {
     unsigned int n;
@@ -413,6 +466,8 @@ int main()
     bst_print_postorder(root);
     printf("\nPost-Order-ono-resursive:\n");
     bst_print_postorder_nonrecur(root);
+    printf("\nLevel-wise:\n");
+    bst_print_levelwise(root);
     printf("\n=======================\n");
     bst_destroy(&root);
     assert(!root);
