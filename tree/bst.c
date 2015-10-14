@@ -144,6 +144,38 @@ void bst_print_inorder(node_t *cur_root)
 }
 
 /*
+ * Find given data in binary search tree.
+ * Returns pointer to the node on success and NULL on failure.
+ *
+ * @cur_root : Root of the binary search tree.
+ * @data : Data that needs to be found in the tree.
+ */
+node_t *bst_find_node(node_t *cur_root, int data)
+{
+    node_t *node = NULL;
+
+    if (cur_root)
+    {
+        if (cur_root->data == data)
+        {
+            return node;
+        }
+
+        node = bst_find_node(cur_root->left_child, data);
+        if (node)
+        {
+            return node;
+        }
+
+        return bst_find_node(cur_root->right_child, data);
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
+/*
  * Print Binary Search Tree in inorder fashion without using recursion.
  *
  * @cur_root : Root of the Binary Search Tree.
@@ -437,6 +469,151 @@ void bst_print_levelwise(node_t *cur_root)
         {
             queue_add(&q, node->right_child);
         }
+    }
+}
+
+/*
+ * Find A is cousin of B or not.
+ * Returns 1 on success and 0 on failure.
+ *
+ * @cur_root : Root of the Binary search tree.
+ * @a : Node A from above tree.
+ * @b : Node B from above tree.
+ */
+int bst_is_cousin(node_t *cur_root, node_t *a, node_t *b)
+{
+    queue_t q;
+    int is_cousin = 0, found_a = 0, found_b = 0;
+
+    if (!cur_root || !a || !b)
+    {
+        //NO-OP.
+        return 0;
+    }
+
+    queue_init(&q);
+
+    queue_add(&q, cur_root);
+    queue_add(&q, NULL);
+
+    while (!queue_empty(&q))
+    {
+        node_t *node = (node_t *) queue_remove(&q);
+
+        //End of current level.
+        if (!node)
+        {
+            if (queue_empty(&q))
+            {
+                //We have processed all the nodes.
+                is_cousin = 0;
+                continue;
+            }
+
+            if (found_a || found_b)
+            {
+                //A & B are not on same level so there are not cousins.
+                is_cousin = 0;
+                break;
+            }
+
+            //All nodes from the next level have already been enqueued, mark end of next level.
+            queue_add(&q, NULL);
+            continue;
+        }
+
+        if ((node->left_child == a && node->right_child == b) ||
+            (node->left_child == b && node->right_child == a))
+        {
+            //There are siblings not cousins.
+            is_cousin = 0;
+            break;
+        }
+        else if (!found_a || !found_b)
+        {
+            if (node->left_child == a || node->right_child == a)
+            {
+                assert(found_a == 0);
+                found_a = 1;
+            }
+            if (node->left_child == b || node->right_child == b)
+            {
+                assert(found_b == 0);
+                found_b = 1;
+            }
+        }
+
+        if (found_a && found_b)
+        {
+            //They are cousins of each other.
+            is_cousin = 1;
+            break;
+        }
+        else
+        {
+            //We haven't found either or both of them, let's check next nodes.
+            if (node->left_child)
+            {
+                queue_add(&q, node->left_child);
+            }
+            if (node->right_child)
+            {
+                queue_add(&q, node->right_child);
+            }
+        }
+    }
+
+    queue_destroy(&q);
+
+    return is_cousin;
+}
+
+/*
+ * Check given Binary Tree is mirror of itself or not.
+ * Returns 1 on success and 0 on failure.
+ *
+ * @current : Root of the binary search tree.
+ */
+int bst_check_mirror(node_t *cur_root)
+{
+    /* Count of nodes which have been visited/processed in the current level. */
+    unsigned int visited_node_count = 1;
+    /* Total number of nodes in the current level, */
+    unsigned int cur_level_total_nodes = 1;
+    /* Stack to store visited nodes. */
+    Stack_t mirror_nodes;
+    queue_t visited_nodes;
+
+    stack_init(&mirror_nodes);
+    queue_init(&visited_nodes);
+
+    queue_add(&visited_nodes, cur_root);
+
+    while (!queue_empty(&visited_nodes))
+    {
+        //We have visited all th nodes in the current level, check for mirror condition.
+        if (visited_node_count == cur_level_total_nodes)
+        {
+            unsigned int i = 0;
+            node_t *node = NULL;
+
+            for (i = 0; i < (visited_node_count / 2); i++)
+            {
+                node = queue_remove(&visited_nodes);
+                stack_push(&mirror_nodes, node);
+            }
+
+            //Order of nodes in second half has to be exactly opposite of first half.
+            while (!stack_empty(&mirror_nodes))
+            {
+                if (stack_pop(&mirror_nodes) != queue_remove(&visited_nodes))
+                {
+                    //
+                    is_mirror = 0;
+                }
+            }
+        }
+
     }
 }
 
