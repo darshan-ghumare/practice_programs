@@ -8,11 +8,17 @@ typedef struct node
 } node_t;
 
 node_t *bst_create(unsigned int n);
+node_t *bst_find_node(node_t *cur_root, int data);
 void bst_destroy(node_t **root);
 int bst_add_node(node_t **cur_root, node_t *new_node);
 void bst_print_inorder(node_t *cur_root);
+void bst_print_inorder_nonrecur(node_t *cur_root);
 void bst_print_inorder_nonrecur_1stack(node_t *cur_root);
 void bst_print_preorder(node_t *cur_root);
+void bst_print_preorder_nonrecur(node_t *cur_root);
 void bst_print_postorder(node_t *cur_root);
+void bst_print_postorder_nonrecur(node_t *cur_root);
+void bst_print_levelwise(node_t *cur_root);
+int bst_is_cousin(node_t *cur_root, node_t *a, node_t *b);
 
 #endif //__BST_H__
