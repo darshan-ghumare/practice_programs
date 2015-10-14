@@ -176,6 +176,78 @@ node_t *bst_find_node(node_t *cur_root, int data)
 }
 
 /*
+ * Calculate height of a binary search tree, find length of longest path.
+ *
+ * @cur_root : Root of a binary search tree.
+ */
+int bst_cal_height(node_t *cur_root)
+{
+    int left_sub_tree_length = 0, right_sub_tree_length = 0;
+
+    if (!cur_root)
+    {
+        return 0;
+    }
+
+    left_sub_tree_length = bst_cal_height(cur_root->left_child);
+    right_sub_tree_length = bst_cal_height(cur_root->right_child);
+
+    return 1 + (left_sub_tree_len > right_sub_tree_length)? left_sub_tree_len: right_sub_tree_length;
+}
+
+/*
+ * Print nodes from given node in spiral fashion of Binary search tree.
+ *
+ * @cur_root : Root of a binary search tree.
+ * @level : Print nodes from this level.
+ * @alternate : if non-zero print in nodes in forward order otherwise reverse order.
+ */
+void bst_print_level_spiral(node_t *cur_root, int level, int alternate)
+{
+    if (!cur_root)
+    {
+        return;
+    }
+    else if (level == 1)
+    {
+        printf("%d ", cur_root->data);
+    }
+    else
+    {
+        assert(level > 1);
+        if (alternate)
+        {
+            bst_print_level_spiral(cur_root->left_child, level - 1, alternate);
+            bst_print_level_spiral(cur_root->right_child, level - 1, alternate);
+        }
+        else
+        {
+            bst_print_level_spiral(cur_root->right_child, level - 1, alternate);
+            bst_print_level_spiral(cur_root->left_child, level - 1, alternate);
+        }
+    }
+}
+
+/*
+ * Print Binary Search Tree in spiral (or zig-zag) fashion.
+ * We travel from root to given level before we start printing nodes.
+ *
+ * @cur_root  Root of binary search tree.
+ */
+void bst_print_spiral(node_t *cur_root)
+{
+    int height = bst_cal_height(cur_root);
+    int i, alternate = 0;
+
+    for (i = 1; i < height; i++)
+    {
+        bst_print_level_spiral(cur_root, i, alternate);
+
+        alternate = ~alternate;
+    }
+}
+
+/*
  * Print Binary Search Tree in inorder fashion without using recursion.
  *
  * @cur_root : Root of the Binary Search Tree.
