@@ -74,3 +74,107 @@ int rotated_array_bsearch(int a[], int key, int low, int up)
     }
 }
 
+/*
+ * Sort array of ints using insertion sort.
+ * Sort array by finding largest elements first to smallest element i.e from right to left
+ * such that a[0] <= a[]1 <= a[2] ... <= a[length - 1].
+ *
+ * @a : Array of ints that needs to be sorted.
+ * @length : Number of elements in the above array.
+ */
+void insertion_sort_right_to_left(int a[], int length)
+{
+    int i = 0; j = 0, key = 0;
+
+    for (i = length - 2; i >= 0; i++)
+    {
+        key = a[i];
+        j = i + 1;
+
+        while (j < length && a[j] < key)
+        {
+            a[j - 1] = a[j];
+            j++;
+        }
+
+        a[j - 1] = key;
+    }
+}
+
+/*
+ * Sort the array of ints using selection sort.
+ * Sort the array by finding smallest element first then second smallest, third smallest
+ * and so on to eventually sort the whole array.
+ *
+ * @a : Array of ints that needs to be sorted.
+ * @length : Number of elements in the above array.
+ */
+void selection_sort(int a[], int length)
+{
+    int i = 0, j = 0, ith_smallest = 0, ith_smallest_index = 0;
+
+    for (i = 0; i < n - 1; i++)
+    {
+        ith_smallest = a[i];
+        ith_smallest_index = i;
+
+        //As the array[i + 1 to n] in not sorted we need to check entire this range to find ith smallest.
+        for (j = i + 1; j < n; j++)
+        {
+            if (ith_smallest > a[j])
+            {
+                ith_smallest = a[j];
+                ith_smallest_index = j;
+            }
+        }
+
+        a[ith_smallest_index] = a[i];
+        a[i] = ith_smallest;
+    }
+}
+
+/*
+ * Merge two sorted array into one.
+ *
+ * @a : First sorted array.
+ * @p : Number of elements in above array.
+ * @b : Second sorted array.
+ * @q : Number of elements in above array.
+ * @c : Output array to store final merged elements.
+ */ 
+void array_merge(int a[], int p, int b[], int q, int c[])
+{
+    int i = 0, j = 0, k = 0;
+
+    while (i < p && j < q)
+    {
+        if (a[i] <= b[j])
+        {
+            c[k] = a[i];
+            i++;
+        }
+        else
+        {
+            c[k] = b[j];
+            j++;
+        }
+
+        k++;
+    }
+
+    while (i < p)
+    {
+        c[k] = a[i];
+        i++;
+        k++;
+    }
+
+    while (j < q)
+    {
+        c[k] = b[j];
+        j++;
+        k++;
+    }
+}
+
+
