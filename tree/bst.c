@@ -355,6 +355,57 @@ void bst_print_inorder_nonrecur_1stack(node_t *cur_root)
     }
 }
 
+// BST node which also has pointer to its parent node, root->parent == NULL.
+typedef struct Node_t
+{
+    int data;
+    struct Node_t *left_child, *right_child, *parent;
+} Node_t;
+
+void bst_print_inorder_nonrecur_nostack(Node_t *root)
+{
+    Node_t *node = cur_root;
+
+    if (!node)
+    {
+        //NO-OP.
+        return;
+    }
+
+    while (1)
+    {
+        while (node->left_child)
+        {
+            node = node->left_child;
+        }
+
+        printf("%d ", node->data);
+
+        while (1)
+        {
+            if (node->right_child)
+            {
+                node = node->right_child;
+                break;
+            }
+
+            while (node->parent)
+            {
+                if (node == node->parent->left_child)
+                {
+                    printf("%d ", node->parent->data);
+                    node = node->parent;
+                    break;
+                }
+
+            }
+            else
+            {
+                break;
+            }
+        }
+}
+
 /*
  * Print Binary search Tree in preorder fashion.
  *
@@ -597,7 +648,7 @@ int bst_is_cousin(node_t *cur_root, node_t *a, node_t *b)
         if ((node->left_child == a && node->right_child == b) ||
             (node->left_child == b && node->right_child == a))
         {
-            //There are siblings not cousins.
+            //They are siblings not cousins.
             is_cousin = 0;
             break;
         }
@@ -648,6 +699,40 @@ int bst_is_cousin(node_t *cur_root, node_t *a, node_t *b)
  */
 int bst_check_mirror(node_t *cur_root)
 {
+/*
+Sol 1
+// Returns true if trees with roots as root1 and root2 are mirror
+bool isMirror(struct Node *root1, struct Node *root2)
+{
+    // If both trees are emptu, then they are mirror images
+    if (root1 == NULL && root2 == NULL)
+        return true;
+ 
+    // For two trees to be mirror images, the following three
+    // conditions must be true
+    // 1 - Their root node's key must be same
+    // 2 - left subtree of left tree and right subtree
+    //      of right tree have to be mirror images
+    // 3 - right subtree of left tree and left subtree
+    //      of right tree have to be mirror images
+    if (root1 && root2 && root1->key == root2->key)
+        return isMirror(root1->left, root2->right) &&
+               isMirror(root1->right, root2->left);
+ 
+    // if neither of above conditions is true then root1
+    // and root2 are not mirror images
+    return false;
+}
+ 
+// Returns true if a tree is symmetric i.e. mirror image of itself
+bool isSymmetric(struct Node* root)
+{
+    // Check if tre is mirror of itself
+    return isMirror(root, root);
+}
+*/
+
+
     /* Count of nodes which have been visited/processed in the current level. */
     unsigned int visited_node_count = 1;
     /* Total number of nodes in the current level, */
@@ -686,6 +771,188 @@ int bst_check_mirror(node_t *cur_root)
             }
         }
 
+    }
+}
+
+/*
+ * Given a root/sub-tree find smallest element in it.
+ * Returns pointer to the smallest element NULL on failure.
+ *
+ * @node : Root of BST.
+ */
+Node_t *bst_find_minimum(Node_t *node)
+{
+    if (!node)
+    {
+        //NO-OP.
+        return NULL;
+    }
+
+    while (node->left_child)
+    {
+        node = node->left_child;
+    }
+
+    return node;
+}
+
+/*
+ * Given a root/sub-tree find largest element in it.
+ * Returns pointer to the largest element NULL on failure.
+ *
+ * @node : Root of BST.
+ */
+Node_t *bst_find_maximum(Node_t *node)
+{
+    if (!node)
+    {
+        //NO-OP.
+        return NULL;
+    }
+
+    while (node->right_child)
+    {
+        node = node->right_child;
+    }
+
+    return node;
+}
+
+/*
+ * Given a node from binary search tree find its predecessor i.e.
+ * find a node which would appeared just before a (given) node if we travals the tree in in-order fashion.
+ * On success returns pointer to the predecessor NULL on failure.
+ *
+ * @node : BST node.
+ */
+Node_t *bst_find_predecessor(Node_t *node)
+{
+    Node_t *ancestor = NULL;
+
+    if (!node)
+    {
+        //NO-OP.
+        return NULL;
+    }
+
+    if (node->left_child)
+    {
+        //By BST property, all elements in the left sub-tree are <= node, so predecessor must be the largest
+        //amoung those nodes.
+        return bst_find_maximum(node->left_child);
+    }
+
+    //If right sub-tree is empty then node predecessor must be one of its lowest ancestor such that given node is in its (ancestor's)
+    //right sub-tree, if its in left sub-tree how the ancestor can come before the node otherwise.
+    ancestor = node->parent;
+    while (ancestor && acestor->left_child == node)
+    {
+        node = ancestor;
+        ancestor = node->parent;
+    }
+
+    return ancestor;
+}
+
+// This function returns overall maximum path sum in 'res'
+// And returns max path sum going through root.
+int findMaxUtil(Node* root, int &res)
+{
+    //Base Case
+    if (root == NULL)
+        return 0;
+ 
+    // l and r store maximum path sum going through left and
+    // right child of root respectively
+    int l = findMaxUtil(root->left,res);
+    int r = findMaxUtil(root->right,res);
+ 
+    // Max path for parent call of root. This path must
+    // include at-most one child of root
+    int max_single = max(max(l, r) + root->data, root->data);
+ 
+    // Max Top represents the sum when the Node under
+    // consideration is the root of the maxsum path and no
+    // ancestors of root are there in max sum path
+    int max_top = max(max_single, l + r + root->data);
+ 
+    res = max(res, max_top); // Store the Maximum Result.
+ 
+    return max_single;
+}
+ 
+// Returns maximum path sum in tree with given root
+//Input: Root of below tree
+//       1
+//      / \
+//     2   3
+//Output: 6
+//
+//See below diagram for another example.
+//1+2+3
+int findMaxSum(Node *root)
+{
+    // Initialize result
+    int res = INT_MIN;
+ 
+    // Compute and return result
+    findMaxUtil(root, res);
+    return res;
+}
+
+// Utility function to store vertical order in map 'm'
+// 'hd' is horigontal distance of current node from root.
+// 'hd' is initally passed as 0
+void getVerticalOrder(Node* root, int hd, map<int, vector<int>> &m)
+{
+    // Base case
+    if (root == NULL)
+        return;
+ 
+    // Store current node in map 'm'
+    m[hd].push_back(root->key);
+ 
+    // Store nodes in left subtree
+    getVerticalOrder(root->left, hd-1, m);
+ 
+    // Store nodes in right subtree
+    getVerticalOrder(root->right, hd+1, m);
+}
+ 
+// The main function to print vertical oder of a binary tree
+// with given root
+//           1
+//        /    \
+//       2      3
+//      / \    / \
+//     4   5  6   7
+//             \   \
+//              8   9 
+//               
+//              
+//The output of print this tree vertically will be:
+//4
+//2
+//1 5 6
+//3 8
+//7
+//9
+void printVerticalOrder(Node* root)
+{
+    // Create a map and store vertical oder in map using
+    // function getVerticalOrder()
+    map < int,vector<int> > m;
+    int hd = 0;
+    getVerticalOrder(root, hd,m);
+ 
+    // Traverse the map and print nodes at every horigontal
+    // distance (hd)
+    map< int,vector<int> > :: iterator it;
+    for (it=m.begin(); it!=m.end(); it++)
+    {
+        for (int i=0; i<it->second.size(); ++i)
+            cout << it->second[i] << " ";
+        cout << endl;
     }
 }
 
