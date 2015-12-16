@@ -324,33 +324,38 @@ void bst_print_inorder_nonrecur_1stack(node_t *cur_root)
 {
     /* Stack of nodes of which we have processed left sub-tree. */
     Stack_t nodes_stack;
-    node_t *node = cur_root;
+    node_t *current = cur_root;
+    bool done = 0;
 
     stack_init(&nodes_stack);
 
-    while (node || !stack_empty(&nodes_stack))
+    while (!done)
     {
-        if (node)
+        /* Reach the left most tNode of the current tNode */
+        if(current !=  NULL)
         {
-            //First process left sub-tree.
-            while (node->left_child)
-            {
-                //Push current node on stack for processing of right sub-tree later.
-                stack_push(&nodes_stack, node);
-                node = node->left_child;
-            }
-
-            printf("%d ", node->data);
-            node = node->right_child;
+            /* place pointer to a tree node on the stack before traversing 
+               the node's left subtree */
+            stack_push(&nodes_stack, current);                                               
+            current = current->left;  
         }
-        else
-        {
-            assert(!stack_empty(&nodes_stack));
-            node = (node_t *) stack_pop(&nodes_stack);
-            assert(node);
 
-            printf("%d ", node->data);
-            node = node->right_child;
+        /* backtrack from the empty subtree and visit the tNode 
+           at the top of the stack; however, if the stack is empty,
+           you are done */
+        else                                                             
+        {
+            if (!stack_empty(&nodes_stack))
+            {
+                current = stack_pop(&nodes_stack);
+                printf("%d ", current->data);
+
+                /* we have visited the node and its left subtree.
+                   Now, it's right subtree's turn */
+                current = current->right;
+            }
+            else
+                done = 1; 
         }
     }
 }
