@@ -3,6 +3,7 @@
 typedef struct node
 {
     int data;
+    struct node *parent;
     struct node *left_child;
     struct node *right_child;
 } node_t;
