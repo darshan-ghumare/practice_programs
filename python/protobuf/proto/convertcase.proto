@@ -1,0 +1,30 @@
+package convertcase;
+
+option java_package = "com.nutanix.convertcase.ifc";
+option java_outer_classname = "ConvertcaseInterfaceProto";
+option cc_generic_services = true;
+option java_generic_services = true;
+option py_generic_services = true;
+
+message ConvertcaseRequesttHeader {
+  // Name of the service hosted at the server.
+  required string service_name = 1;
+  // Name of the method to be invoked at the server.
+  required string method_name = 2;
+}
+
+message ConvertcaseRequest {
+  required ConvertcaseRequesttHeader header = 1;
+  required string word = 2;
+}
+
+message ConvertcaseResponse {
+  required string word = 1;
+  optional double process_start = 2;
+  optional double process_end = 3;
+}
+
+service ConvertcaseService {
+  rpc ToLowercase(ConvertcaseRequest) returns(ConvertcaseResponse);
+  rpc ToUppercase(ConvertcaseRequest) returns(ConvertcaseResponse);
+}
