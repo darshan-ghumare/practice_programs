@@ -237,6 +237,28 @@ void bst_in_order_nonrecursive(node_t *root)
   }
 }
 
+/*
+ * Interval Tree :-
+ * INterval tree is BST which help us to serv rnge query.
+ * Ex :- Given n appointments, find all conflicting appointments
+ * https://www.geeksforgeeks.org/given-n-appointments-find-conflicting-appointments/
+ * Each node in Interval tree has three elements :- lo, high amd max. Low and
+ * high tells us appointment legnth amd max tell us max(high) of all nodes
+ * rooted ar the ginve node.
+ $
+ */
+
+/*
+ * Segment Tree
+ * https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/
+ */
+
+/*
+ * Get rank of element in the array.
+ * https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/
+ */
+
+
 int main()
 {
     //unsigned int n = 11;
